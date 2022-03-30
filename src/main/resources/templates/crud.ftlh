@@ -97,8 +97,8 @@
                         <td>${veiculo.descricao}</td>
                         <td>${veiculo.cor}</td>
                         <td>${veiculo.vendido?then('Vendido', 'À venda')}</td>
-                        <td>${veiculo.created}</td>
-                        <td>${veiculo.updated}</td>
+                        <td>${veiculo.created.format('dd-MM-yyyy HH:mm:ss')}</td>
+                        <td>${veiculo.updated.format('dd-MM-yyyy HH:mm:ss')}</td>
 
                         <td>
                             <div class="d-flex d-justify-content-center">
