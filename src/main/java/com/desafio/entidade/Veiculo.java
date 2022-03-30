@@ -6,6 +6,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="veiculo")
+@NamedNativeQuery(
+        name = "Veiculo.buscarPorParametrosPassados",
+        query = "select * from veiculo where marca = ?1 and ano = ?2  and cor = ?3",
+        resultClass = Veiculo.class)
 public class Veiculo {
 
     @Id

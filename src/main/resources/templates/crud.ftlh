@@ -17,7 +17,7 @@
         <div class="jumbotron mt-5">
             <h1>API DE VEÍCULOS</h1>
         </div>
-                <form action="/api/veiculos" method="POST">
+                <form action="/veiculos" method="POST">
 
                     <div class="form-group">
                         <label for="nome">Veiculo:</label>

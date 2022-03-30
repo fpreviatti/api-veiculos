@@ -37,8 +37,7 @@ public class VeiculoService {
         repository.saveAndFlush(veiculo);
     }
 
-    public Optional<Veiculo> buscarVeiculosPorMarcaAnoCor(String marca, int ano, String cor){
-
-        return repository.findByMarcaAndAnoAndCor(marca,ano,cor);
+    public List<Veiculo> buscarVeiculosPorMarcaAnoCor(String marca, int ano, String cor){
+        return repository.buscarPorParametrosPassados(marca,ano,cor);
     }
 }

@@ -10,17 +10,19 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import springfox.documentation.annotations.ApiIgnore;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 @Api(value = "API REST Veiculos")
-@RequestMapping(value="/api")
+@RequestMapping(value="/")
 @CrossOrigin(origins = "*")
 
 public class VeiculoController {
     JSONObject obj;
+    List<JSONObject> objList;
     VeiculoController(){
         obj = new JSONObject();
     }
@@ -29,6 +31,7 @@ public class VeiculoController {
     VeiculoService veiculoService;
 
     @GetMapping(value = "/")
+    @ApiIgnore
     public String paginaInicial(Model memoria){
 
         memoria.addAttribute("listaVeiculos", veiculoService.listarVeiculos()
@@ -58,9 +61,12 @@ public class VeiculoController {
 
         var lista = veiculoService.buscarVeiculosPorMarcaAnoCor(marca,ano,cor);
 
-        System.out.println("chamou método listarVeiculosEspecificos");
-
-        obj.put("veiculos", lista);
+        if(lista!=null){
+            lista.stream()
+                    .forEach(veiculo -> {
+                        obj.put("veiculos", lista);
+                    });
+        }
 
         return obj;
     }
@@ -85,7 +91,7 @@ public class VeiculoController {
         veiculo.setUpdated(LocalDateTime.now());
 
         veiculoService.salvarVeiculo(veiculo);
-        return "redirect:/api/";
+        return "redirect:/";
     }
 
     @DeleteMapping(value = "veiculos/{id}")
@@ -94,20 +100,33 @@ public class VeiculoController {
 
         veiculoService.excluirVeiculo(id);
 
-        return "redirect:/api/";
+        return "redirect:/";
     }
 
-    @PutMapping("veiculos/{id}")
+    @RequestMapping(value = "veiculos/{id}", method={RequestMethod.PUT})
     @ApiOperation(value="Altera um veículo")
-    public String alterarVeiculo(Veiculo veiculo, @PathVariable Long id){
+    public String alterarVeiculo(@RequestBody Veiculo veiculo, @PathVariable Long id){
         var veiculoEncontrado = veiculoService.listarVeiculoPorId(id);
 
-        veiculo.setUpdated(LocalDateTime.now());
-
-        if(veiculoEncontrado!=null){
+        if(veiculoEncontrado.isPresent()){
             veiculoService.atualizarVeiculo(veiculo);
         }
-        return "redirect:/api/";
+
+        return "redirect:/";
     }
 
+    @RequestMapping(value = "veiculos/{id}", method={RequestMethod.PATCH})
+    @ApiOperation(value="Altera apenas alguns dados do veículo")
+    public String alterarApenasAlgunsDadosDoVeiculo(@PathVariable Long id, @RequestBody Integer ano){
+
+        var veiculoEncontrado = veiculoService.listarVeiculoPorId(id);
+
+        if(veiculoEncontrado.isPresent()){
+            var veiculo = veiculoEncontrado.get();
+
+            veiculo.setAno(ano);
+            veiculoService.atualizarVeiculo(veiculo);
+        }
+        return "redirect:/";
+    }
 }
