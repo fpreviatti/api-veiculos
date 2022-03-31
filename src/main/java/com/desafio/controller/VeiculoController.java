@@ -99,6 +99,7 @@ public class VeiculoController {
 
     @RequestMapping(value = "veiculos/{id}", method={RequestMethod.DELETE})
     @ApiOperation(value="Exclui um veículo")
+    @ResponseBody
     public String excluirVeiculo(@PathVariable Long id) {
 
         veiculoService.excluirVeiculo(id);
@@ -108,6 +109,7 @@ public class VeiculoController {
 
     @RequestMapping(value = "veiculos/{id}", method={RequestMethod.PUT})
     @ApiOperation(value="Altera um veículo")
+    @ResponseBody
     public String alterarVeiculo(@RequestBody Veiculo veiculo, @PathVariable Long id){
         var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
@@ -120,6 +122,7 @@ public class VeiculoController {
 
     @RequestMapping(value = "veiculos/{id}", method={RequestMethod.PATCH})
     @ApiOperation(value="Altera apenas alguns dados do veículo")
+    @ResponseBody
     public String alterarApenasAlgunsDadosDoVeiculo(@PathVariable Long id, @RequestBody Integer ano){
 
         var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
