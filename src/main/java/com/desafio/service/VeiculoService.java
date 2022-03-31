@@ -5,6 +5,7 @@ import com.desafio.repository.VeiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,14 +15,14 @@ public class VeiculoService {
     @Autowired
     private VeiculoRepository repository;
 
-    public List<Veiculo> listarVeiculos(){
+    public List<Veiculo> buscarVeiculos(){
 
         List<Veiculo> veiculos = repository.findAll();
 
         return veiculos;
     }
 
-    public Optional<Veiculo> listarVeiculoPorId(Long id){
+    public Optional<Veiculo> buscarVeiculoPorId(Long id){
         return repository.findById(id);
     }
 
@@ -40,4 +41,10 @@ public class VeiculoService {
     public List<Veiculo> buscarVeiculosPorMarcaAnoCor(String marca, int ano, String cor){
         return repository.buscarPorParametrosPassados(marca,ano,cor);
     }
+
+    public List<Veiculo> buscarVeiculosNaoVendidos(boolean vendido){
+        return repository.findByVendido(vendido);
+    }
+
+
 }

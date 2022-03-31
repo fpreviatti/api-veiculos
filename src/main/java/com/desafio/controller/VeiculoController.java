@@ -34,10 +34,13 @@ public class VeiculoController {
     @ApiIgnore
     public String paginaInicial(Model memoria){
 
-        memoria.addAttribute("listaVeiculos", veiculoService.listarVeiculos()
+        memoria.addAttribute("listaVeiculos", veiculoService.buscarVeiculos()
                 .stream()
                 .map(veiculo -> new Veiculo(veiculo.getId(),veiculo.getNome(),veiculo.getMarca(),veiculo.getAno(),veiculo.getDescricao(),veiculo.getCor(),veiculo.isVendido(),veiculo.getCreated(), veiculo.getUpdated()))
                 .collect(Collectors.toList()));
+
+        listarVeiculosNaoVendidos(memoria);
+        listarVeiculosCriadosSemanaPassada(memoria);
 
         return "/crud";
     }
@@ -47,7 +50,7 @@ public class VeiculoController {
     @ApiOperation(value="Retorna uma lista de veículos")
     public JSONObject listarVeiculos(){
 
-        var lista = veiculoService.listarVeiculos();
+        var lista = veiculoService.buscarVeiculos();
 
             obj.put("veiculos", lista);
 
@@ -76,7 +79,7 @@ public class VeiculoController {
     @ApiOperation(value="Retorna um veículo único")
     public JSONObject listarVeiculoPorId(@PathVariable Long id){
 
-        var veiculoEncontrado = veiculoService.listarVeiculoPorId(id);
+        var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
         obj.put("veiculos", veiculoEncontrado);
 
@@ -94,7 +97,7 @@ public class VeiculoController {
         return "redirect:/";
     }
 
-    @DeleteMapping(value = "veiculos/{id}")
+    @RequestMapping(value = "veiculos/{id}", method={RequestMethod.DELETE})
     @ApiOperation(value="Exclui um veículo")
     public String excluirVeiculo(@PathVariable Long id) {
 
@@ -106,7 +109,7 @@ public class VeiculoController {
     @RequestMapping(value = "veiculos/{id}", method={RequestMethod.PUT})
     @ApiOperation(value="Altera um veículo")
     public String alterarVeiculo(@RequestBody Veiculo veiculo, @PathVariable Long id){
-        var veiculoEncontrado = veiculoService.listarVeiculoPorId(id);
+        var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
         if(veiculoEncontrado.isPresent()){
             veiculoService.atualizarVeiculo(veiculo);
@@ -119,7 +122,7 @@ public class VeiculoController {
     @ApiOperation(value="Altera apenas alguns dados do veículo")
     public String alterarApenasAlgunsDadosDoVeiculo(@PathVariable Long id, @RequestBody Integer ano){
 
-        var veiculoEncontrado = veiculoService.listarVeiculoPorId(id);
+        var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
         if(veiculoEncontrado.isPresent()){
             var veiculo = veiculoEncontrado.get();
@@ -127,6 +130,36 @@ public class VeiculoController {
             veiculo.setAno(ano);
             veiculoService.atualizarVeiculo(veiculo);
         }
+        return "redirect:/";
+    }
+
+    @GetMapping(value = "/vendidos")
+    @ApiIgnore
+    public String listarVeiculosNaoVendidos(Model memory){
+
+        memory.addAttribute("listaVeiculosNaoVendidos", veiculoService.buscarVeiculosNaoVendidos(false)
+                .stream()
+                .map(veiculo -> new Veiculo(veiculo.getId(),veiculo.getNome(),veiculo.getMarca(),veiculo.getAno(),veiculo.getDescricao(),veiculo.getCor(),veiculo.isVendido(),veiculo.getCreated(), veiculo.getUpdated()))
+                .collect(Collectors.toList()));
+
+        memory.addAttribute("contagemVeiculosNaoVendidos", veiculoService.buscarVeiculosNaoVendidos(false)
+                .stream()
+                .count());
+
+        return "redirect:/";
+    }
+
+
+    @GetMapping(value = "/veiculosCriadosSemanaPassada")
+    @ApiIgnore
+    public String listarVeiculosCriadosSemanaPassada(Model memory){
+
+        memory.addAttribute("listaVeiculosCriadosSemanaPassada", veiculoService.buscarVeiculos()
+                .stream()
+                .map(veiculo -> new Veiculo(veiculo.getId(),veiculo.getNome(),veiculo.getMarca(),veiculo.getAno(),veiculo.getDescricao(),veiculo.getCor(),veiculo.isVendido(),veiculo.getCreated(), veiculo.getUpdated()))
+                        .filter(p -> p.getCreated().isAfter(LocalDateTime.now().minusDays(7)))
+                .collect(Collectors.toList()));
+
         return "redirect:/";
     }
 }
