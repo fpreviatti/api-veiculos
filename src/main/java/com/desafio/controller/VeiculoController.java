@@ -107,6 +107,13 @@ public class VeiculoController {
         return "redirect:/";
     }
 
+    @PostMapping("/excluir/{id}")
+    @ApiIgnore
+    public String excluirVeiculoViaAplicacao(@PathVariable Long id) {
+        veiculoService.excluirVeiculo(id);
+        return "redirect:/";
+    }
+
     @RequestMapping(value = "veiculos/{id}", method={RequestMethod.PUT})
     @ApiOperation(value="Altera um veículo")
     @ResponseBody
