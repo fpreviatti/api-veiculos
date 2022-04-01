@@ -2,6 +2,7 @@ package com.desafio.entidade;
 
 import io.swagger.annotations.ApiParam;
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,10 +18,20 @@ public class Veiculo {
     private Long id;
 
     @Column(name="veiculo")
+    @NotBlank(message = "{app.veiculo.blank}")
+    @Size(min = 2, max = 30, message = "{app.veiculo.size}")
     private String nome;
+
+    @NotBlank(message = "{app.marca.blank}")
+    @Size(min = 2, max = 30, message = "{app.marca.size}")
     private String marca;
+
+    @Digits(integer = 4, message="{app.ano.min}", fraction = 0)
     private Integer ano;
     private String descricao;
+
+    @NotBlank(message = "{app.cor.blank}")
+    @Size(min = 2, max = 30, message = "{app.cor.size}")
     private String cor;
 
     @Column(columnDefinition = "boolean default false")

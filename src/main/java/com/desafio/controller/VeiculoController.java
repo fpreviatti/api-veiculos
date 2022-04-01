@@ -1,5 +1,7 @@
 package com.desafio.controller;
 
+import com.desafio.enums.EnumCor;
+import com.desafio.enums.EnumMarca;
 import com.desafio.entidade.Veiculo;
 import com.desafio.service.VeiculoService;
 import io.swagger.annotations.Api;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,6 +42,9 @@ public class VeiculoController {
                 .stream()
                 .map(veiculo -> new Veiculo(veiculo.getId(),veiculo.getNome(),veiculo.getMarca(),veiculo.getAno(),veiculo.getDescricao(),veiculo.getCor(),veiculo.isVendido(),veiculo.getCreated(), veiculo.getUpdated()))
                 .collect(Collectors.toList()));
+
+          memoria.addAttribute("listaMarcas", EnumMarca.MARCAS);
+          memoria.addAttribute("listaCores", EnumCor.CORES);
 
         listarVeiculosNaoVendidos(memoria);
         listarVeiculosCriadosSemanaPassada(memoria);
@@ -88,7 +95,7 @@ public class VeiculoController {
 
     @PostMapping("/veiculos")
     @ApiOperation(value="Salva um veículo")
-    public String salvarVeiculo(Veiculo veiculo) {
+    public String salvarVeiculo(@Valid Veiculo veiculo) {
 
         veiculo.setCreated(LocalDateTime.now());
         veiculo.setUpdated(LocalDateTime.now());
