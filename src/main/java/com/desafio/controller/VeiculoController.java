@@ -17,6 +17,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Controller
@@ -57,7 +58,7 @@ public class VeiculoController {
     @ApiOperation(value="Retorna uma lista de veículos")
     public JSONObject listarVeiculos(){
 
-        var lista = veiculoService.buscarVeiculos();
+        List<Veiculo> lista = veiculoService.buscarVeiculos();
 
             obj.put("veiculos", lista);
 
@@ -69,7 +70,7 @@ public class VeiculoController {
     @ApiOperation(value="Retorna uma lista de veiculos específicos")
     public JSONObject listarVeiculosEspecificos(@RequestParam("marca") String marca, @RequestParam("ano") int ano, @RequestParam("cor") String cor){
 
-        var lista = veiculoService.buscarVeiculosPorMarcaAnoCor(marca,ano,cor);
+        List<Veiculo> lista = veiculoService.buscarVeiculosPorMarcaAnoCor(marca,ano,cor);
 
         if(lista!=null){
             lista.stream()
@@ -86,7 +87,7 @@ public class VeiculoController {
     @ApiOperation(value="Retorna um veículo único")
     public JSONObject listarVeiculoPorId(@PathVariable Long id){
 
-        var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
+        Optional<Veiculo> veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
         obj.put("veiculos", veiculoEncontrado);
 
@@ -125,7 +126,7 @@ public class VeiculoController {
     @ApiOperation(value="Altera um veículo")
     @ResponseBody
     public String alterarVeiculo(@RequestBody Veiculo veiculo, @PathVariable Long id){
-        var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
+        Optional<Veiculo> veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
         if(veiculoEncontrado.isPresent()){
             veiculoService.atualizarVeiculo(veiculo);
@@ -139,10 +140,10 @@ public class VeiculoController {
     @ResponseBody
     public String alterarApenasAlgunsDadosDoVeiculo(@PathVariable Long id, @RequestBody Integer ano){
 
-        var veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
+        Optional<Veiculo> veiculoEncontrado = veiculoService.buscarVeiculoPorId(id);
 
         if(veiculoEncontrado.isPresent()){
-            var veiculo = veiculoEncontrado.get();
+            Veiculo veiculo = veiculoEncontrado.get();
 
             veiculo.setAno(ano);
             veiculoService.atualizarVeiculo(veiculo);
